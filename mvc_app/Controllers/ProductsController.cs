@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using mvc_app.Models;
 using mvc_app.Services;
 
@@ -6,51 +7,66 @@ namespace mvc_app.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly IServiceProducts? _serviceProducts;
-        private readonly ProductContext? _productContext;
-        public ProductsController(IServiceProducts? serviceProducts, ProductContext? productContext)
+        private readonly IServiceProducts _serviceProducts;
+        public ProductsController(IServiceProducts serviceProducts)
         {
-            _productContext = productContext;
             _serviceProducts = serviceProducts;
-            _serviceProducts._productContext = productContext;
         }
         //GET: http://localhost:[port]/products
-        public ViewResult Index() => View(_serviceProducts?.Read());
+        public async Task<ViewResult> Index()
+        {
+            var products = await _serviceProducts.ReadAsync();
+            return View(products);
+        }
         //GET: http://localhost:[port]/products/details/{id}
-        public ViewResult Details(int id) => View(_serviceProducts?.GetById(id));
+        public async Task<ViewResult> Details(int id)
+        {
+            var product = await _serviceProducts.GetByIdAsync(id);
+            return View(product);
+        }
+        [Authorize(Roles = "admin")]
+        [HttpGet]
         //GET: http://localhost:[port]/products/create
         public ViewResult Create() => View();
-       //POST: http://localhost:[port]/products/create
+        [Authorize(Roles = "admin")]
+        //POST: http://localhost:[port]/products/create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description")] Product product)
         {
-            Console.WriteLine("I HERE!!!!");
             if(ModelState.IsValid)
             {
-                _ = _serviceProducts?.Create(product);
+                await _serviceProducts.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public ViewResult Update() => View();
+        [Authorize(Roles = "admin")]
         //POST: http://localhost:[port]/products/update/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, [Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
         {
             if(ModelState.IsValid)
             {
-                _ = _serviceProducts?.Update(id, product);
+                await _serviceProducts.UpdateAsync(id, product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public ViewResult Delete() => View();
+        [Authorize(Roles = "admin")]
         //POST: http://localhost:[port]/products/delete/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _ = _serviceProducts?.Delete(id);
+            await _serviceProducts.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

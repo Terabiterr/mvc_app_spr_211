@@ -7,8 +7,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        //Add service products
-        builder.Services.AddSingleton<IServiceProducts, ServiceProducts>();
+        //Add service products DI container
+        builder.Services.AddScoped<IServiceProducts, ServiceProducts>();
         builder.Services.AddDbContext<ProductContext>(options =>
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -29,17 +29,19 @@ public class Program
             options.Password.RequireUppercase = false;
             options.Password.RequireLowercase = false;
             options.Password.RequiredUniqueChars = 0;
-        }).AddEntityFrameworkStores<UserContext>();
+        })
+            .AddRoles<IdentityRole>() //Important include first
+            .AddEntityFrameworkStores<UserContext>(); //Next
 
         builder.Services.AddControllersWithViews();
         var app = builder.Build();
-
+        
+        app.UseRouting(); //Important include first
         //identity
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseAuthentication(); //Next
+        app.UseAuthorization(); //Next
 
         app.UseStaticFiles();
-        app.UseRouting();
         //https://localhost:[port]/
         app.MapControllerRoute(
                 name: "default",

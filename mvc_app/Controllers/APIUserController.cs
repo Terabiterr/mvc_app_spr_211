@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace mvc_app.Controllers
 {
-    public class UserController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class APIUserController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserController(
-            UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager, 
+        public APIUserController(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
             RoleManager<IdentityRole> roleManager
             )
         {
@@ -19,15 +22,10 @@ namespace mvc_app.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> Register(string email, string password)
         {
-            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 return BadRequest("Email or password are important ...");
             }
@@ -47,12 +45,7 @@ namespace mvc_app.Controllers
             {
                 Console.WriteLine(item);
             }
-            return BadRequest(Json(result.Errors));
-        }
-        [HttpGet]
-        public IActionResult Auth()
-        {
-            return View();
+            return BadRequest(result.Errors);
         }
         [HttpPost]
         public async Task<IActionResult> Auth(string email, string password)
@@ -63,12 +56,12 @@ namespace mvc_app.Controllers
                 return BadRequest("Email or password are important ...");
             }
             var result = await _signInManager.PasswordSignInAsync(
-                    email, 
+                    email,
                     password,
                     isPersistent: false,
                     lockoutOnFailure: false
                 );
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
                 //return Ok("Auth OK");
@@ -81,11 +74,6 @@ namespace mvc_app.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-        [HttpGet]
-        public ViewResult CreateRole()
-        {
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> CreateRole(string roleName)
         {
@@ -94,7 +82,7 @@ namespace mvc_app.Controllers
                 return BadRequest("The role name is important ...");
             }
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
-            if(roleExists)
+            if (roleExists)
             {
                 return BadRequest($"The role {roleName} is already exists ...");
             }
@@ -105,12 +93,7 @@ namespace mvc_app.Controllers
                 return RedirectToAction("Index", "Home");
                 //return Ok("Auth OK");
             }
-            return BadRequest(Json(result.Errors));
-        }
-        [HttpGet]
-        public ViewResult AssignRole()
-        {
-            return View();
+            return BadRequest(result.Errors);
         }
         [HttpPost]
         public async Task<IActionResult> AssignRole(string userId, string roleName)
@@ -134,7 +117,7 @@ namespace mvc_app.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return BadRequest(Json(result.Errors));
+            return BadRequest(result.Errors);
         }
     }
 }
