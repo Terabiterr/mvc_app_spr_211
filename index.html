@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<button id="getProducts">Get Products</button>
+
+<script>
+    $(document).ready(function() {
+        $('#getProducts').click(function() {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1YzJiYzNmNC1jMjgxLTQyNjItYTFjYy1jMmM0MjliZTI5MzgiLCJ1bmlxdWVfbmFtZSI6Im1hcmlvQGdtYWlsLmNvbSIsImVtYWlsIjoibWFyaW9AZ21haWwuY29tIiwibmJmIjoxNzI5NDU2ODM3LCJleHAiOjE3Mjk0NTg2MzcsImlhdCI6MTcyOTQ1NjgzN30.20oKYL_LiovCo6wS88tizaREU1FQP7JPLQqywoXgZn4";
+
+            $.ajax({
+                url: 'https://localhost:7255/api/apiproducts', // Убедитесь, что этот URL соответствует вашему API
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token // Добавляем токен в заголовок
+                },
+                success: function(data) {
+                    console.log('Success:', data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

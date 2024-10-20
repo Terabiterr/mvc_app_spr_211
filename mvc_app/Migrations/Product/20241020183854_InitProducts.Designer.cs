@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using mvc_app;
 
 #nullable disable
 
-namespace mvc_app.Migrations
+namespace mvc_app.Migrations.Product
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20240929164751_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241020183854_InitProducts")]
+    partial class InitProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

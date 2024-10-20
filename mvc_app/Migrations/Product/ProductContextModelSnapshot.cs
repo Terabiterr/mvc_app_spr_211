@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using mvc_app;
 
 #nullable disable
 
-namespace mvc_app.Migrations
+namespace mvc_app.Migrations.Product
 {
     [DbContext(typeof(ProductContext))]
     partial class ProductContextModelSnapshot : ModelSnapshot

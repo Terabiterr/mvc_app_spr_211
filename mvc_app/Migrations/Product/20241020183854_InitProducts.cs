@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace mvc_app.Migrations
+namespace mvc_app.Migrations.Product
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitProducts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
